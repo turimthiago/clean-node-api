@@ -12,6 +12,7 @@
     "@typescript-eslint/comma-spacing": "off",
     "@typescript-eslint/retun-await": "off",
     "@typescript-eslint/quotes":"off",
-    "@typescript-eslint/semi": "off"
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/member-delimiter-style":"off"
   }
 }
