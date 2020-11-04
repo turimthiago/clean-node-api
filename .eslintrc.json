@@ -10,6 +10,8 @@
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/consistence-type-definitions": "off",
     "@typescript-eslint/comma-spacing": "off",
-    "@typescript-eslint/retun-await": "off"
+    "@typescript-eslint/retun-await": "off",
+    "@typescript-eslint/quotes":"off",
+    "@typescript-eslint/semi": "off"
   }
 }
