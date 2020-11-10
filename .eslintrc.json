@@ -3,17 +3,16 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/consistence-type-definitions": "off",
     "@typescript-eslint/comma-spacing": "off",
     "@typescript-eslint/retun-await": "off",
-    "@typescript-eslint/quotes":"off",
+    "@typescript-eslint/quotes": "off",
     "@typescript-eslint/semi": "off",
-    "@typescript-eslint/member-delimiter-style":"off",
-    "@typescript-eslint/method-signature-style":"off"
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/method-signature-style": "off",
+    "@typescript-eslint/no-floating-promises": "off"
   }
 }
