@@ -6,6 +6,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "14.14.6",
+    "@types/validator": "^13.1.0",
     "@typescript-eslint/eslint-plugin": "4.6.1",
     "@typescript-eslint/parser": "4.6.1",
     "eslint": "7.12.1",
@@ -29,6 +30,9 @@
     "test:integration": "yarn test -- -c jest-integration-config.js",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test -- --coverage",
-    "check":"yarn-check -s -u"
+    "check": "yarn-check -s -u"
+  },
+  "dependencies": {
+    "validator": "^13.1.17"
   }
 }
