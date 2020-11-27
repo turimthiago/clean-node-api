@@ -1,6 +1,4 @@
-import { connect } from "http2";
 import { Collection, MongoClient } from "mongodb";
-import { disconnect } from "process";
 
 export const MongoHelper = {
   client: null as MongoClient,
@@ -15,5 +13,9 @@ export const MongoHelper = {
   },
   getCollection (name: string): Collection {
     return this.client.db().collection(name);
+  },
+  map (collection: any): any {
+    const { _id, ...collectionWithoutId } = collection;
+    return Object.assign({}, collectionWithoutId, { id: _id });
   }
 };
