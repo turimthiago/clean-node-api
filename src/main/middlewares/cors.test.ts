@@ -3,7 +3,7 @@ import app from "../config/app";
 
 describe("CORS middleware", () => {
   test("Should enable CORS", async () => {
-    app.post("/test_cors", (request, response) => {
+    app.get("/test_cors", (request, response) => {
       response.send();
     });
 
