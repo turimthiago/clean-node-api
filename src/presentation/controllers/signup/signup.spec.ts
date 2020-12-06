@@ -20,6 +20,7 @@ const makeEmailValidator = (): EmailValidator => {
   }
   return new EmailValidatorStub();
 };
+
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",
   name: "valid_name",

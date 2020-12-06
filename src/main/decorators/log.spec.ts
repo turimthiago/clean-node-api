@@ -1,5 +1,6 @@
 import { LogErrorRepository } from "../../data/protocols/log-error-repository";
-import { serverError } from "../../presentation/helpers/http-helpers";
+import { AccountModel } from "../../domain/models/account";
+import { ok, serverError } from "../../presentation/helpers/http-helpers";
 import {
   Controller,
   HttpRequest,
@@ -16,16 +17,16 @@ const makeLogErrorRepository = (): LogErrorRepository => {
   return new LogErrorRepositoryStub();
 };
 
+const makeFakeServerError = (): HttpResponse => {
+  const fackeError = new Error();
+  fackeError.stack = "any_stack";
+  return serverError(fackeError);
+};
+
 const makeController = (): Controller => {
   class ControllerStub implements Controller {
     async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-      const httpResponse = {
-        statusCode: 200,
-        body: {
-          name: "Thiago"
-        }
-      };
-      return await new Promise((resolve) => resolve(httpResponse));
+      return await new Promise((resolve) => resolve(ok(makeFakeAccount())));
     }
   }
   return new ControllerStub();
@@ -36,6 +37,13 @@ interface SutTypes {
   controllerStub: Controller;
   logErrorRepositoryStub: LogErrorRepository;
 }
+
+const makeFakeAccount = (): AccountModel => ({
+  id: "valid_id",
+  name: "valid_name",
+  email: "valid_email@mail.com",
+  password: "valid_password"
+});
 
 const makeSut = (): SutTypes => {
   const controllerStub = makeController();
@@ -74,21 +82,15 @@ describe("LogController Decorator", () => {
       }
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      body: {
-        name: "Thiago"
-      }
-    });
+    expect(httpResponse).toEqual(ok(makeFakeAccount()));
   });
 
   test("Should call LogErrorRepository with correct error if controller returns a server error", async () => {
     const { sut, controllerStub, logErrorRepositoryStub } = makeSut();
-    const fackeError = new Error();
-    fackeError.stack = "any_stack";
-    const error = serverError(fackeError);
     const logSpy = jest.spyOn(logErrorRepositoryStub, "log");
-    jest.spyOn(controllerStub, "handle").mockResolvedValueOnce(error);
+    jest
+      .spyOn(controllerStub, "handle")
+      .mockResolvedValueOnce(makeFakeServerError());
     const httpRequest = {
       body: {
         email: "any_mail@mail.com",
