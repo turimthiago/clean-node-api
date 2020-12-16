@@ -9,7 +9,8 @@ import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   badRequest,
   serverError,
-  anauthorized
+  anauthorized,
+  ok
 } from "../../helpers/http-helpers";
 
 export class LoginController implements Controller {
@@ -35,6 +36,8 @@ export class LoginController implements Controller {
       }
       const accessToken = await this.authentication.auth(email, password);
       if (!accessToken) return anauthorized();
+
+      return ok({ accessToken });
     } catch (error) {
       return serverError(error);
     }
