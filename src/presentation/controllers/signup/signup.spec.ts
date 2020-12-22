@@ -1,4 +1,4 @@
-import { ServerError } from "../../errors";
+import { MissingParamError, ServerError } from "../../errors";
 import {
   AddAccount,
   AddAccountModel,
@@ -8,12 +8,22 @@ import {
 import { SignUpController } from "./signup";
 import { ok, serverError, badRequest } from "../../helpers/http-helpers";
 import { rejects } from "assert";
+import { HttpRequest } from "../../protocols";
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",
   name: "valid_name",
   email: "valid_email@mail.com",
   password: "valid_password"
+});
+
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    name: "any_name",
+    email: "any_email@mail.com",
+    password: "any_password",
+    passwordConfirmation: "any_password"
+  }
 });
 
 const makeAddAccount = (): AddAccount => {
@@ -97,5 +107,24 @@ describe("SignUp Controller", () => {
     };
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(ok(makeFakeAccount()));
+  });
+
+  test("Should call Validation with correct value", async () => {
+    const { sut, validationStub } = makeSut();
+    const validateSpy = jest.spyOn(validationStub, "validate");
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
+  });
+
+  test("Should retun 400 if Validation retuns an error", async () => {
+    const { sut, validationStub } = makeSut();
+    jest
+      .spyOn(validationStub, "validate")
+      .mockReturnValueOnce(new MissingParamError("any_field"));
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(
+      badRequest(new MissingParamError("any_field"))
+    );
   });
 });
