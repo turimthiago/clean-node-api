@@ -1,5 +1,3 @@
 jest --clearCache
 
-video 30 [X]
-
-parei 32 13:14
+video 33 [X]
