@@ -1,11 +1,12 @@
-import { stringify } from "querystring";
-import { AccountModel } from "../../domain/models/account";
-import { AuthenticationModel } from "../../domain/usecases/authentication";
-import { HashComparer } from "../protocols/criptography/hash-comparer";
-import { TokenGenerator } from "../protocols/criptography/token-generator";
-import { LoadAccountByEmailRepository } from "../protocols/db/load-account-by-email-repository";
-import { UpdateAccessTokenRepository } from "../protocols/db/update-access-token-repository";
 import { DbAuthentication } from "./db-authentication";
+import {
+  AccountModel,
+  AuthenticationModel,
+  HashComparer,
+  TokenGenerator,
+  UpdateAccessTokenRepository,
+  LoadAccountByEmailRepository
+} from "./db-authentication-protocols";
 interface SutTypes {
   sut: DbAuthentication;
   loadAccountByEmailRespositoryStub: LoadAccountByEmailRepository;
