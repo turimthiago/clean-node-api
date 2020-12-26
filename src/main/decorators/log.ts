@@ -1,6 +1,6 @@
 import { response } from "express";
 import { resolve } from "path";
-import { LogErrorRepository } from "../../data/protocols/log-error-repository";
+import { LogErrorRepository } from "../../data/protocols/db/log-error-repository";
 import {
   Controller,
   HttpRequest,
