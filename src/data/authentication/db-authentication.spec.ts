@@ -2,25 +2,30 @@ import { stringify } from "querystring";
 import { AccountModel } from "../../domain/models/account";
 import { AuthenticationModel } from "../../domain/usecases/authentication";
 import { HashComparer } from "../protocols/criptography/hash-comparer";
+import { TokenGenerator } from "../protocols/criptography/token-generator";
 import { LoadAccountByEmailRepository } from "../protocols/db/load-account-by-email-repository";
 import { DbAuthentication } from "./db-authentication";
 interface SutTypes {
   sut: DbAuthentication;
   loadAccountByEmailRespositoryStub: LoadAccountByEmailRepository;
   hashComparerStub: HashComparer;
+  tokenGeneratorStub: TokenGenerator;
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRespositoryStub = makeLoadAccountByEmailRespository();
   const hashComparerStub = makeHasheComparer();
+  const tokenGeneratorStub = makeTokenGenerator();
   const sut = new DbAuthentication(
     loadAccountByEmailRespositoryStub,
-    hashComparerStub
+    hashComparerStub,
+    tokenGeneratorStub
   );
   return {
     sut,
     loadAccountByEmailRespositoryStub,
-    hashComparerStub
+    hashComparerStub,
+    tokenGeneratorStub
   };
 };
 
@@ -31,6 +36,15 @@ const makeHasheComparer = (): HashComparer => {
     }
   }
   return new HashComparerStub();
+};
+
+const makeTokenGenerator = (): TokenGenerator => {
+  class TokenGeneratorStub implements TokenGenerator {
+    async generate (id: string): Promise<string> {
+      return await Promise.resolve("any_token");
+    }
+  }
+  return new TokenGeneratorStub();
 };
 
 const makeFakeAccount = (): AccountModel => ({
@@ -90,9 +104,7 @@ describe("DbAuthentication UseCase", () => {
 
   test("Shoud throw if HashComparer throws", async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest
-      .spyOn(hashComparerStub, "comparer")
-      .mockRejectedValueOnce(new Error());
+    jest.spyOn(hashComparerStub, "comparer").mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeAuthentication());
     expect(promise).rejects.toThrow();
   });
@@ -106,10 +118,15 @@ describe("DbAuthentication UseCase", () => {
 
   test("Shoud return null if HashComparer with returns false", async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest
-      .spyOn(hashComparerStub, "comparer")
-      .mockResolvedValueOnce(false);
+    jest.spyOn(hashComparerStub, "comparer").mockResolvedValueOnce(false);
     const acessToken = await sut.auth(makeFakeAuthentication());
     expect(acessToken).toBeNull();
+  });
+
+  test("Shoud call TokenGenerator with correct id", async () => {
+    const { sut, tokenGeneratorStub } = makeSut();
+    const generateSpy = jest.spyOn(tokenGeneratorStub, "generate");
+    await sut.auth(makeFakeAuthentication());
+    expect(generateSpy).toHaveBeenCalledWith("any_id");
   });
 });
