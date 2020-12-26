@@ -27,8 +27,14 @@ export class DbAuthentication implements Authentication {
       authentication.email
     );
     if (account) {
-      await this.hashComparer.comparer(authentication.password, account.password);
-      await this.tokenGenerator.generate(account.id);
+      const isValid = await this.hashComparer.comparer(
+        authentication.password,
+        account.password
+      );
+      if (isValid) {
+        const accessToken = await this.tokenGenerator.generate(account.id);
+        return accessToken;
+      }
     }
     return null;
   }
