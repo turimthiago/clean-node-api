@@ -46,7 +46,7 @@ const makeUpdateAccessTokenRepository = (): UpdateAccessTokenRepository => {
 
 const makeHasheComparer = (): HashComparer => {
   class HashComparerStub implements HashComparer {
-    async comparer (value: string, hash: string): Promise<Boolean> {
+    async compare (value: string, hash: string): Promise<Boolean> {
       return await Promise.resolve(true);
     }
   }
@@ -112,28 +112,28 @@ describe("DbAuthentication UseCase", () => {
 
   test("Shoud call HashComparer with correct values", async () => {
     const { sut, hashComparerStub } = makeSut();
-    const compareSpy = jest.spyOn(hashComparerStub, "comparer");
+    const compareSpy = jest.spyOn(hashComparerStub, "compare");
     await sut.auth(makeFakeAuthentication());
     expect(compareSpy).toHaveBeenCalledWith("any_password", "hased_password");
   });
 
   test("Shoud throw if HashComparer throws", async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, "comparer").mockRejectedValueOnce(new Error());
+    jest.spyOn(hashComparerStub, "compare").mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeAuthentication());
     expect(promise).rejects.toThrow();
   });
 
   test("Shoud call HashComparer with correct values", async () => {
     const { sut, hashComparerStub } = makeSut();
-    const compareSpy = jest.spyOn(hashComparerStub, "comparer");
+    const compareSpy = jest.spyOn(hashComparerStub, "compare");
     await sut.auth(makeFakeAuthentication());
     expect(compareSpy).toHaveBeenCalledWith("any_password", "hased_password");
   });
 
   test("Shoud return null if HashComparer with returns false", async () => {
     const { sut, hashComparerStub } = makeSut();
-    jest.spyOn(hashComparerStub, "comparer").mockResolvedValueOnce(false);
+    jest.spyOn(hashComparerStub, "compare").mockResolvedValueOnce(false);
     const acessToken = await sut.auth(makeFakeAuthentication());
     expect(acessToken).toBeNull();
   });
