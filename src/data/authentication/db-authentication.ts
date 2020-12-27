@@ -30,7 +30,7 @@ export class DbAuthentication implements Authentication {
       authentication.email
     );
     if (account) {
-      const isValid = await this.hashComparer.comparer(
+      const isValid = await this.hashComparer.compare(
         authentication.password,
         account.password
       );

@@ -1,3 +1,8 @@
 jest --clearCache
 
-video 38 [X]
+video 40 [X]
+
+Assuntos:
+Hash = critofragra uma string (123 sempre terá o mesmo hash), é irreversível;
+Encrypter = criptografa uma string utlizando uma chave secreta, é reversível;
+Encoding = embaralha uma string para transporte (ex. url com query params);
