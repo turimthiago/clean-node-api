@@ -4,7 +4,7 @@ import {
   EmailValidator,
   HttpRequest,
   HttpResponse
-} from "./login-protocols";
+} from "./login-controller-protocols";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   badRequest,
@@ -12,7 +12,7 @@ import {
   anauthorized,
   ok
 } from "../../helpers/http/http-helpers";
-import { Validation } from "../signup/signup-protocols";
+import { Validation } from "../signup/signup-coneroller-protocols";
 
 export class LoginController implements Controller {
   private readonly validation: Validation;
