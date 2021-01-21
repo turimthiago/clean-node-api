@@ -9,10 +9,10 @@ services:
     ports:
       - "27017:27017"
   api:
-    continer_name: api-container
+    container_name: api-container
     build: .
-    restart: always
     image: clean-node-api
+    restart: always
     command: npm start
     volumes:
       - ./dist:/usr/src/clean-node-api/dist
