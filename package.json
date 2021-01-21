@@ -33,6 +33,7 @@
   "scripts": {
     "start": "node dist/src/main/server.js", 
     "build": "rimraf dist && tsc",
+    "debug": "node --inspect=0.0.0.0:9222 --nolazy dist/src/main/server.js", 
     "up": "yarn run build && docker-compose up -d",
     "down" : "docker-compose down",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --no-cache",
