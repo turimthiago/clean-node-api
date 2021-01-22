@@ -7,6 +7,6 @@ module.exports = {
     autoStart: false,
     instance: {
       name: "jest",
-    },
+    }, 
   },
 };

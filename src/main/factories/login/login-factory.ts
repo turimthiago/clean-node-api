@@ -1,4 +1,3 @@
-import { mongodbMemoryServerOptions } from "../../../../jest-mongodb-config";
 import { DbAuthentication } from "../../../data/authentication/db-authentication";
 import { BcryptAdapter } from "../../../infra/criptography/bcrypt-adapter/bcrypt-adapter";
 import { JwtAdapter } from "../../../infra/criptography/jwt-adapter/jwt-adapter";
