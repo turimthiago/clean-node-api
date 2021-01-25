@@ -1,13 +1,29 @@
-import { MissingParamError, ServerError } from "../../errors";
+import { EmailInUseError, MissingParamError, ServerError } from "../../errors";
 import {
   AddAccount,
   AddAccountModel,
   AccountModel,
-  Validation
+  Validation,
+  Authentication,
+  AuthenticationModel
 } from "./signup-coneroller-protocols";
 import { SignUpController } from "./signup-controller";
-import { ok, serverError, badRequest } from "../../helpers/http/http-helpers";
+import {
+  ok,
+  serverError,
+  badRequest,
+  forbidden
+} from "../../helpers/http/http-helpers";
 import { HttpRequest } from "../../protocols";
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (authentication: AuthenticationModel): Promise<string> {
+      return await new Promise((resolve) => resolve("any_token"));
+    }
+  }
+  return new AuthenticationStub();
+};
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",
@@ -19,7 +35,7 @@ const makeFakeAccount = (): AccountModel => ({
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     name: "any_name",
-    email: "any_email@mail.com",
+    email: "any_email@mail.com.br",
     password: "any_password",
     passwordConfirmation: "any_password"
   }
@@ -47,13 +63,19 @@ interface SutTypes {
   sut: SignUpController;
   addAccountStub: AddAccount;
   validationStub: Validation;
+  authenticationStub: Authentication;
 }
 
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount();
   const validationStub = makeValidation();
-  const sut = new SignUpController(addAccountStub, validationStub);
-  return { sut, addAccountStub, validationStub };
+  const authenticationStub = makeAuthentication();
+  const sut = new SignUpController(
+    addAccountStub,
+    validationStub,
+    authenticationStub
+  );
+  return { sut, addAccountStub, validationStub, authenticationStub };
 };
 
 describe("SignUp Controller", () => {
@@ -94,6 +116,21 @@ describe("SignUp Controller", () => {
     });
   });
 
+  test("Should retun 403 AddAccount returns null", async () => {
+    const { sut, addAccountStub } = makeSut();
+    jest.spyOn(addAccountStub, "add").mockResolvedValueOnce(null);
+    const httpRequest = {
+      body: {
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+        passwordConfirmation: "valid_password"
+      }
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
+  });
+
   test("Should retun 200 if valid data is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = {
@@ -105,7 +142,7 @@ describe("SignUp Controller", () => {
       }
     };
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(ok(makeFakeAccount()));
+    expect(httpResponse).toEqual(ok({ accessToken: "any_token" }));
   });
 
   test("Should call Validation with correct value", async () => {
@@ -125,5 +162,26 @@ describe("SignUp Controller", () => {
     expect(httpResponse).toEqual(
       badRequest(new MissingParamError("any_field"))
     );
+  });
+
+  test("Should call Authentication with correct values", async () => {
+    const { sut, authenticationStub } = makeSut();
+    const authSpy = jest.spyOn(authenticationStub, "auth");
+    await sut.handle(makeFakeRequest());
+    expect(authSpy).toHaveBeenCalledWith({
+      email: "any_email@mail.com.br",
+      password: "any_password"
+    });
+  });
+
+  test("Should return 500 if Authentication throws", async () => {
+    const { sut, authenticationStub } = makeSut();
+    const isValidSpy = jest
+      .spyOn(authenticationStub, "auth")
+      .mockRejectedValueOnce(() => {
+        throw new Error();
+      });
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
