@@ -1,4 +1,4 @@
-import { EmailInUseError, MissingParamError, ServerError } from "../../errors";
+import { EmailInUseError, MissingParamError, ServerError } from "../../../errors";
 import {
   AddAccount,
   AddAccountModel,
@@ -13,8 +13,8 @@ import {
   serverError,
   badRequest,
   forbidden
-} from "../../helpers/http/http-helpers";
-import { HttpRequest } from "../../protocols";
+} from "../../../helpers/http/http-helpers";
+import { HttpRequest } from "../../../protocols";
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {

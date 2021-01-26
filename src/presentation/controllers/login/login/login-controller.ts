@@ -5,13 +5,13 @@ import {
   HttpRequest,
   HttpResponse
 } from "./login-controller-protocols";
-import { InvalidParamError, MissingParamError } from "../../errors";
+import { InvalidParamError, MissingParamError } from "../../../errors";
 import {
   badRequest,
   serverError,
   anauthorized,
   ok
-} from "../../helpers/http/http-helpers";
+} from "../../../helpers/http/http-helpers";
 import { Validation } from "../signup/signup-coneroller-protocols";
 
 export class LoginController implements Controller {
