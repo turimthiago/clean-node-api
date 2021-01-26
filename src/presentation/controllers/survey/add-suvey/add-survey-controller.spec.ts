@@ -1,23 +1,26 @@
 import { badRequest } from "../../../helpers/http/http-helpers";
 import { HttpRequest, Validation } from "../../../protocols";
 import { AddSurveyController } from "./add-survey-controller";
+import { AddSurvey, AddSurveyModel } from "./add-survey-protocols";
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     question: "any_question",
-    answer: [{ image: "any_image", answer: "any_answer" }]
+    answers: [{ image: "any_image", answer: "any_answer" }]
   }
 });
 
 interface SutTypes {
   sut: AddSurveyController;
   validationStub: Validation;
+  addSurveyStub: AddSurvey;
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation();
-  const sut = new AddSurveyController(validationStub);
-  return { validationStub, sut };
+  const addSurveyStub = makeAddSurvey();
+  const sut = new AddSurveyController(validationStub, addSurveyStub);
+  return { validationStub, sut, addSurveyStub };
 };
 
 const makeValidation = (): Validation => {
@@ -29,7 +32,16 @@ const makeValidation = (): Validation => {
   return new ValidationStub();
 };
 
-describe("AddSurvey Controller", () => {
+const makeAddSurvey = (): AddSurvey => {
+  class AddSurveyStub implements AddSurvey {
+    async add (data: AddSurveyModel): Promise<void> {
+      return await Promise.resolve();
+    }
+  }
+  return new AddSurveyStub();
+};
+
+describe("AddSurvey Controller", async () => {
   test("Shoud call validation with correct values", async () => {
     const { validationStub, sut } = makeSut();
     const validateSpy = jest.spyOn(validationStub, "validate");
@@ -44,5 +56,13 @@ describe("AddSurvey Controller", () => {
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(badRequest(new Error()));
+  });
+
+  test("Shoud call AddSurvey with correct values", async () => {
+    const { addSurveyStub, sut } = makeSut();
+    const addSpy = jest.spyOn(addSurveyStub, "add");
+    const httpRequest = makeFakeRequest();
+    await sut.handle(httpRequest);
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 });
