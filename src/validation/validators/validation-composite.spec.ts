@@ -1,7 +1,5 @@
-import validator from "validator";
-import { InvalidParamError, MissingParamError } from "../../errors";
-import { CompareFieldValidation } from "./compare-fields-validation";
-import { Validation } from "../../protocols/validation";
+import { MissingParamError } from "../../presentation/errors";
+import { Validation } from "../../presentation/protocols";
 import { ValidationComposite } from "./validation-composite";
 
 interface SutTypes {
