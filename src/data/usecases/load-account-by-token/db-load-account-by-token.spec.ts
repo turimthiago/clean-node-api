@@ -64,7 +64,7 @@ describe("DbLoadAccountByToken", () => {
     expect(account).toBeNull();
   });
 
-  test("Should call LoadAccountByTokenRepositoryStub with correct values", async () => {
+  test("Should call LoadAccountByTokenRepository with correct values", async () => {
     const { sut, loadAccountByTokenRepositoryStub } = makeSut();
     const loadByTokenSpy = jest.spyOn(
       loadAccountByTokenRepositoryStub,
@@ -73,5 +73,13 @@ describe("DbLoadAccountByToken", () => {
 
     await sut.load("any_token", "any_role");
     expect(loadByTokenSpy).toHaveBeenCalledWith("any_token", "any_role");
+  });
+
+  test("Should return null if LoadAccountByTokenRepository returns null", async () => {
+    const { sut, loadAccountByTokenRepositoryStub } = makeSut();
+    jest.spyOn(loadAccountByTokenRepositoryStub, "loadByToken").mockResolvedValueOnce(null);
+
+    const account = await sut.load("any_token");
+    expect(account).toBeNull();
   });
 });
