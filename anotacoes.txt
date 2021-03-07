@@ -1,6 +1,6 @@
 jest --clearCache
 
-video 57 [X]
+video 58 [X]
 
 Assuntos:
 Hash = critografa uma string (123 sempre terá o mesmo hash), é irreversível;
