@@ -21,7 +21,7 @@ describe("Survey Routes", () => {
   });
 
   describe("POST /surveys", () => {
-    test("Should return 204 on survey success", async () => {
+    test("Should return 403 on add survey without token", async () => {
       const password = await hash("123", 12);
 
       await request(app)
@@ -38,7 +38,7 @@ describe("Survey Routes", () => {
             }
           ]
         })
-        .expect(204);
+        .expect(403);
     });
   });
 });
