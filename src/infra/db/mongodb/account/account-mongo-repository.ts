@@ -14,6 +14,7 @@ implements
     UpdateAccessTokenRepository,
     LoadAccountByTokenRepository {
   async loadByToken (token: string, role?: string): Promise<AccountModel> {
+    console.log("repo.loadBdddddyToken", token);
     const accountCollection = await MongoHelper.getCollection("accounts");
     const account = await accountCollection.findOne({
       accessToken: token,
