@@ -44,7 +44,7 @@
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test -- --coverage",
     "check": "yarn-check -s -u",
-    "test:covaralls" : "npm run test:ci && coveralls < coverage/lcov.info"
+    "test:coveralls" : "npm run test:ci && coveralls < coverage/lcov.info"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
