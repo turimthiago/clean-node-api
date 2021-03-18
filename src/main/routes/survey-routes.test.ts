@@ -6,6 +6,28 @@ import request from "supertest";
 import { sign } from "jsonwebtoken";
 import env from "../config/env";
 
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: "Thiago Turim",
+    email: "turimthiago@gmail.com",
+    password: "123",
+    role: "admin"
+  });
+  const id = res.ops[0]._id;
+  const accessToken = sign({ id }, env.jwtSecret);
+  await accountCollection.updateOne(
+    {
+      _id: id
+    },
+    {
+      $set: {
+        accessToken
+      }
+    }
+  );
+  return accessToken;
+};
+
 let surveyCollection: Collection;
 let accountCollection: Collection;
 describe("Survey Routes", () => {
@@ -48,27 +70,9 @@ describe("Survey Routes", () => {
 
   describe("POST /surveys", () => {
     test("Should return 204 on add survey with valid accessToken", async () => {
-      const res = await accountCollection.insertOne({
-        name: "Thiago Turim",
-        email: "turimthiago@gmail.com",
-        password: "123",
-        role: "admin"
-      });
-      const id = res.ops[0]._id;
-      const accessToken = sign({ id }, env.jwtSecret);
-      await accountCollection.updateOne(
-        {
-          _id: id
-        },
-        {
-          $set: {
-            accessToken
-          }
-        }
-      );
       await request(app)
         .post("/api/surveys")
-        .set("x-access-token", accessToken)
+        .set("x-access-token", await makeAccessToken())
         .send({
           question: "Question",
           answers: [
