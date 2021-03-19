@@ -1,15 +1,15 @@
-import { Authentication, EmailValidator } from "./login-controller-protocols";
-import { InvalidParamError, MissingParamError } from "../../../errors";
+import { AuthenticationModel } from "@/domain/usecases/authentication";
+import { Authentication } from "./login-controller-protocols";
+import { MissingParamError } from "../../../errors";
 import {
   badRequest,
   serverError,
   anauthorized,
   ok
-} from "../../../helpers/http/http-helpers";
+} from "@/presentation/helpers/http/http-helpers";
 import { LoginController } from "./login-controller";
 import { HttpRequest, HttpResponse } from "../../../protocols";
 import { Validation } from "../signup/signup-coneroller-protocols";
-import { AuthenticationModel } from "../../../../domain/usecases/authentication";
 
 interface SutTypes {
   sut: LoginController;

@@ -1,5 +1,5 @@
-import { AccountModel } from "../../../domain/models/account";
-import { Decrypter } from "../../protocols/criptography/decrypter";
+import { AccountModel } from "@/domain/models/account";
+import { Decrypter } from "@/data/protocols/criptography/decrypter";
 import { LoadAccountByTokenRepository } from "../add-account/db-add-account-protocols";
 import { DbLoadAccountByToken } from "./db-load-account-by-token";
 

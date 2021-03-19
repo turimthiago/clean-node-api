@@ -6,7 +6,11 @@
     "target": "es2019",
     "esModuleInterop": true,
     "allowJs": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "include": ["src"]
 }
