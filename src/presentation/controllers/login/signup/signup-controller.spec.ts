@@ -1,4 +1,8 @@
-import { EmailInUseError, MissingParamError, ServerError } from "../../../errors";
+import {
+  EmailInUseError,
+  MissingParamError,
+  ServerError
+} from "../../../errors";
 import {
   AddAccount,
   AddAccountModel,
