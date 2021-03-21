@@ -21,13 +21,17 @@ interface SutTypes {
   addSurveyRepositoryStub: AddSurveyRepository;
 }
 
-const makeSut = (): SutTypes => {
+const makeAddSurveyRepository = (): AddSurveyRepository => {
   class AddSurveyRepositoryStub implements AddSurveyRepository {
     async add (data: AddSurveyModel): Promise<void> {
       return await Promise.resolve();
     }
   }
-  const addSurveyRepositoryStub = new AddSurveyRepositoryStub();
+  return new AddSurveyRepositoryStub();
+};
+
+const makeSut = (): SutTypes => {
+  const addSurveyRepositoryStub = makeAddSurveyRepository();
   const sut = new DbAddSurvey(addSurveyRepositoryStub);
   return { sut, addSurveyRepositoryStub };
 };
