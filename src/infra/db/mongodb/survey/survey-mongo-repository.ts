@@ -14,7 +14,8 @@ implements
     LoadSurveyByIdRepository {
   async loadById (id: string): Promise<SurveyModel> {
     const surveyCollection = await MongoHelper.getCollection("surveys");
-    return await surveyCollection.findOne({ _id: id });
+    const survey = await surveyCollection.findOne({ _id: id });
+    return survey && MongoHelper.map(survey);
   }
 
   async add (data: AddSurveyModel): Promise<void> {
@@ -24,7 +25,7 @@ implements
 
   async loadAll (): Promise<SurveyModel[]> {
     const surveyCollection = await MongoHelper.getCollection("surveys");
-    const surveys = surveyCollection.find().toArray();
-    return await surveys;
+    const surveys = await surveyCollection.find().toArray();
+    return MongoHelper.mapCollection(surveys);
   }
 }
