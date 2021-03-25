@@ -1,4 +1,4 @@
-import { AuthenticationModel } from "@/domain/usecases/authentication";
+import { AuthenticationModel } from "@/domain/usecases/account/authentication";
 import { Authentication } from "./login-controller-protocols";
 import { MissingParamError } from "../../../errors";
 import {

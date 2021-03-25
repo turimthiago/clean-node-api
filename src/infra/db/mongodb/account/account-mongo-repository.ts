@@ -2,10 +2,10 @@ import {
   LoadAccountByEmailRepository,
   LoadAccountByTokenRepository,
   UpdateAccessTokenRepository
-} from "@/data/authentication/db-authentication-protocols";
+} from "@/data/usecases/account/authentication/db-authentication-protocols";
 import { AddAccountRepository } from "@/data/protocols/db/account/add-account-repository";
 import { AccountModel } from "@/domain/models/account";
-import { AddAccountModel } from "@/domain/usecases/add-account";
+import { AddAccountModel } from "@/domain/usecases/account/add-account";
 import { MongoHelper } from "../helpers/mongo-helper";
 export class AccountMongoRepository
 implements
