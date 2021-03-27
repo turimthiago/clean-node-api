@@ -6,6 +6,7 @@ import {
 import { SaveSurveyResultController } from "./save-survey-result-controller";
 import {
   forbidden,
+  ok,
   serverError
 } from "@/presentation/helpers/http/http-helpers";
 import { InvalidParamError } from "@/presentation/errors";
@@ -133,10 +134,14 @@ describe("SaveSurveyResult Controller", () => {
 
   test("Shoud return 500 if SaveSurveyResult throws", async () => {
     const { saveSurveyResultStub, sut } = makeSut();
-    jest
-      .spyOn(saveSurveyResultStub, "save")
-      .mockRejectedValueOnce(new Error());
+    jest.spyOn(saveSurveyResultStub, "save").mockRejectedValueOnce(new Error());
     const response = await sut.handle({});
     expect(response).toEqual(serverError(new Error()));
+  });
+
+  test("Shoud return 200 on success", async () => {
+    const { sut } = makeSut();
+    const response = await sut.handle(makeFakeRequest());
+    expect(response).toEqual(ok(makeFakeSurveyResult()));
   });
 });
