@@ -130,4 +130,13 @@ describe("SaveSurveyResult Controller", () => {
       answer: "any_answer"
     });
   });
+
+  test("Shoud return 500 if SaveSurveyResult throws", async () => {
+    const { saveSurveyResultStub, sut } = makeSut();
+    jest
+      .spyOn(saveSurveyResultStub, "save")
+      .mockRejectedValueOnce(new Error());
+    const response = await sut.handle({});
+    expect(response).toEqual(serverError(new Error()));
+  });
 });
