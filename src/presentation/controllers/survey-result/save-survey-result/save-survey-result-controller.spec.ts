@@ -4,12 +4,18 @@ import {
   SurveyModel
 } from "./save-survey-result-controller-protocols";
 import { SaveSurveyResultController } from "./save-survey-result-controller";
-import { forbidden, serverError } from "@/presentation/helpers/http/http-helpers";
+import {
+  forbidden,
+  serverError
+} from "@/presentation/helpers/http/http-helpers";
 import { InvalidParamError } from "@/presentation/errors";
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
     surveyId: "any_survey_id"
+  },
+  body: {
+    anwser: "any_anwser"
   }
 });
 
@@ -57,8 +63,23 @@ describe("SaveSurveyResult Controller", () => {
 
   test("Shoud return 500 if LoadSurveyById throws", async () => {
     const { loadSurveyByIdStub, sut } = makeSut();
-    jest.spyOn(loadSurveyByIdStub, "loadById").mockRejectedValueOnce(new Error());
+    jest
+      .spyOn(loadSurveyByIdStub, "loadById")
+      .mockRejectedValueOnce(new Error());
     const response = await sut.handle({});
     expect(response).toEqual(serverError(new Error()));
+  });
+
+  test("Shoud return 403 if invalid anwser is provided", async () => {
+    const { sut } = makeSut();
+    const response = await sut.handle({
+      params: {
+        surveyId: "any_survey_id"
+      },
+      body: {
+        anwser: "wrong_anwser"
+      }
+    });
+    expect(response).toEqual(forbidden(new InvalidParamError("answer")));
   });
 });
