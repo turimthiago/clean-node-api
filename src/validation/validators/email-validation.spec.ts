@@ -1,15 +1,7 @@
 import { InvalidParamError, ServerError } from "@/presentation/errors";
 import { EmailValidation } from "./email-validation";
 import { EmailValidator } from "@/presentation/protocols";
-
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid (email: string): boolean {
-      return true;
-    }
-  }
-  return new EmailValidatorStub();
-};
+import { mockEmailValidator } from "@/validation/test";
 
 interface SutTypes {
   sut: EmailValidation;
@@ -17,7 +9,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const emailValidatorStub = makeEmailValidator();
+  const emailValidatorStub = mockEmailValidator();
   const sut = new EmailValidation("email", emailValidatorStub);
   return { sut, emailValidatorStub };
 };

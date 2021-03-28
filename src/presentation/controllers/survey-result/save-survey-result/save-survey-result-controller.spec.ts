@@ -16,6 +16,9 @@ import {
   SaveSurveyResultParam
 } from "@/domain/usecases/survey-result/save-survey-result";
 import { SurveyResultModel } from "@/domain/models/survey-result";
+import { mockSurveyModel, throwError } from "@/domain/test";
+import { mockSaveSurveyResut, mockSurveyResultModel } from "@/domain/test/mock-survey-result";
+import { mockLoadSurveyById } from "@/presentation/test";
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -27,42 +30,9 @@ const makeFakeRequest = (): HttpRequest => ({
   accountId: "any_account_id"
 });
 
-const makeFakeSurvey = (): SurveyModel => ({
-  id: "any_id",
-  question: "any_question",
-  answers: [{ image: "any_image", answer: "any_answer" }],
-  date: new Date()
-});
-
-const makeFakeSurveyResult = (): SurveyResultModel => ({
-  id: "valid_id",
-  surveyId: "valid_survey_id",
-  accountId: "valid_account_id",
-  answer: "valid_anwser",
-  date: new Date()
-});
-
-const makeLoadSurveyById = (): LoadSurveyById => {
-  class LoadSurveyByIdStub implements LoadSurveyById {
-    async loadById (id: string): Promise<SurveyModel> {
-      return await Promise.resolve(makeFakeSurvey());
-    }
-  }
-  return new LoadSurveyByIdStub();
-};
-
-const makeSaveSurveyResut = (): SaveSurveyResult => {
-  class SaveSurveyResultStub implements SaveSurveyResult {
-    async save (data: SaveSurveyResultParam): Promise<SurveyResultModel> {
-      return await Promise.resolve(makeFakeSurveyResult());
-    }
-  }
-  return new SaveSurveyResultStub();
-};
-
 const makeSut = (): SutTypes => {
-  const saveSurveyResultStub = makeSaveSurveyResut();
-  const loadSurveyByIdStub = makeLoadSurveyById();
+  const saveSurveyResultStub = mockSaveSurveyResut();
+  const loadSurveyByIdStub = mockLoadSurveyById();
   const sut = new SaveSurveyResultController(
     loadSurveyByIdStub,
     saveSurveyResultStub
@@ -102,7 +72,7 @@ describe("SaveSurveyResult Controller", () => {
     const { loadSurveyByIdStub, sut } = makeSut();
     jest
       .spyOn(loadSurveyByIdStub, "loadById")
-      .mockRejectedValueOnce(new Error());
+      .mockRejectedValueOnce(throwError);
     const response = await sut.handle({});
     expect(response).toEqual(serverError(new Error()));
   });
@@ -142,6 +112,6 @@ describe("SaveSurveyResult Controller", () => {
   test("Shoud return 200 on success", async () => {
     const { sut } = makeSut();
     const response = await sut.handle(makeFakeRequest());
-    expect(response).toEqual(ok(makeFakeSurveyResult()));
+    expect(response).toEqual(ok(mockSurveyResultModel()));
   });
 });

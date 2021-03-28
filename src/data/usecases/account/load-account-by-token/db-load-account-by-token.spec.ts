@@ -1,3 +1,5 @@
+import { mockDecrypter, mockLoadAccountByTokenRepository } from "@/data/test";
+import { mockAccountModel, throwError } from "@/domain/test";
 import {
   AccountModel,
   DbLoadAccountByToken,
@@ -11,37 +13,9 @@ interface SutTypes {
   loadAccountByTokenRepositoryStub: LoadAccountByTokenRepository;
 }
 
-const makeFakeAccount = (): AccountModel => ({
-  id: "any_id",
-  email: "any_email@mail.com.br",
-  name: "any_name",
-  password: "hased_password"
-});
-
-const makeLoadAccountByTokenRepository = (): LoadAccountByTokenRepository => {
-  class LoadAccountByTokenRepositoryStub
-  implements LoadAccountByTokenRepository {
-    async loadByToken (token: string, role?: string): Promise<AccountModel> {
-      return await Promise.resolve(makeFakeAccount());
-    }
-  }
-  const loadAccountByTokenRepositoryStub = new LoadAccountByTokenRepositoryStub();
-  return loadAccountByTokenRepositoryStub;
-};
-
-const makeDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (value: string): Promise<string> {
-      return await Promise.resolve("any_token");
-    }
-  }
-  const decrypterStub = new DecrypterStub();
-  return decrypterStub;
-};
-
 const makeSut = (): SutTypes => {
-  const decrypterStub = makeDecrypter();
-  const loadAccountByTokenRepositoryStub = makeLoadAccountByTokenRepository();
+  const decrypterStub = mockDecrypter();
+  const loadAccountByTokenRepositoryStub = mockLoadAccountByTokenRepository();
   const sut = new DbLoadAccountByToken(
     decrypterStub,
     loadAccountByTokenRepositoryStub
@@ -91,7 +65,7 @@ describe("DbLoadAccountByToken", () => {
     const { sut } = makeSut();
 
     const account = await sut.load("any_token");
-    expect(account).toEqual(makeFakeAccount());
+    expect(account).toEqual(mockAccountModel());
   });
 
   test("Should throw if Decrypt throws", async () => {
@@ -105,7 +79,7 @@ describe("DbLoadAccountByToken", () => {
     const { sut, loadAccountByTokenRepositoryStub } = makeSut();
     jest
       .spyOn(loadAccountByTokenRepositoryStub, "loadByToken")
-      .mockRejectedValueOnce(new Error());
+      .mockRejectedValueOnce(throwError);
     const promise = sut.load("any_token", "any_rola");
     await expect(promise).rejects.toThrow();
   });

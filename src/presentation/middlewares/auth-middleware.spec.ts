@@ -1,34 +1,20 @@
+import { throwError } from "@/domain/test";
 import { AccessDeniedError } from "../errors";
 import { forbidden, ok, serverError } from "../helpers/http/http-helpers";
+import { mockLoadAccountByToken } from "../test";
 import { AuthMiddleware } from "./auth-middleware";
-import { AccountModel, LoadAccountByToken, HttpRequest } from "./auth-middleware-protocols";
+import { LoadAccountByToken, HttpRequest } from "./auth-middleware-protocols";
 
 interface SutTypes {
   sut: AuthMiddleware;
   loadAccountByTokenStub: LoadAccountByToken;
 }
 
-const makeLoadAccountByToken = (): LoadAccountByToken => {
-  class LoadAccountByTokenStub implements LoadAccountByToken {
-    async load (accessToken: string, role?: string): Promise<AccountModel> {
-      return await Promise.resolve(makeFakeAccount());
-    }
-  }
-  return new LoadAccountByTokenStub();
-};
-
 const makeSut = (role?: string): SutTypes => {
-  const loadAccountByTokenStub = makeLoadAccountByToken();
+  const loadAccountByTokenStub = mockLoadAccountByToken();
   const sut = new AuthMiddleware(loadAccountByTokenStub, role);
   return { sut, loadAccountByTokenStub };
 };
-
-const makeFakeAccount = (): AccountModel => ({
-  id: "any_id",
-  email: "any_email@mail.com.br",
-  name: "any_name",
-  password: "hased_password"
-});
 
 const makeFakeRequest = (): HttpRequest => ({
   headers: {
@@ -67,7 +53,7 @@ describe("Auth Middleware", () => {
     const { sut, loadAccountByTokenStub } = makeSut();
     jest
       .spyOn(loadAccountByTokenStub, "load")
-      .mockRejectedValueOnce(new Error());
+      .mockRejectedValueOnce(throwError);
     const httResponse = await sut.handle(makeFakeRequest());
     expect(httResponse).toEqual(serverError(new Error()));
   });
