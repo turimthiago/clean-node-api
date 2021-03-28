@@ -5,11 +5,11 @@ import {
 } from "../../../errors";
 import {
   AddAccount,
-  AddAccountModel,
+  AddAccountParams,
   AccountModel,
   Validation,
   Authentication,
-  AuthenticationModel
+  AuthenticationParams
 } from "./signup-coneroller-protocols";
 import { SignUpController } from "./signup-controller";
 import {
@@ -22,7 +22,7 @@ import { HttpRequest } from "../../../protocols";
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth (authentication: AuthenticationModel): Promise<string> {
+    async auth (authentication: AuthenticationParams): Promise<string> {
       return await new Promise((resolve) => resolve("any_token"));
     }
   }
@@ -47,7 +47,7 @@ const makeFakeRequest = (): HttpRequest => ({
 
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
-    async add (account: AddAccountModel): Promise<AccountModel> {
+    async add (account: AddAccountParams): Promise<AccountModel> {
       return await new Promise((resolve) => resolve(makeFakeAccount()));
     }
   }

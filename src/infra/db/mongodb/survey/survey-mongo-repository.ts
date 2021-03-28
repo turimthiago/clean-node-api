@@ -1,5 +1,5 @@
 import {
-  AddSurveyModel,
+  AddSurveyParams,
   AddSurveyRepository
 } from "@/data/protocols/db/survey/add-survey-protocols";
 import { LoadSurveysRepository } from "@/data/protocols/db/survey/load-surveys-repository";
@@ -19,7 +19,7 @@ implements
     return survey && MongoHelper.map(survey);
   }
 
-  async add (data: AddSurveyModel): Promise<void> {
+  async add (data: AddSurveyParams): Promise<void> {
     const surveyCollection = await MongoHelper.getCollection("surveys");
     await surveyCollection.insertOne(data);
   }
